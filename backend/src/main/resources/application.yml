@@ -1,0 +1,45 @@
+spring:
+  application:
+    name: recruitment-api
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/recruitment}
+    username: ${DB_USERNAME:recruitment}
+    password: ${DB_PASSWORD:recruitment}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate   # schema is owned by Flyway migrations
+  flyway:
+    enabled: true
+  servlet:
+    multipart:
+      # A little headroom over the 5 MB CV limit for the other form fields.
+      # The exact 5 MB rule is enforced in CvStorageService with a clear message.
+      max-file-size: 6MB
+      max-request-size: 7MB
+
+server:
+  error:
+    include-message: never
+    include-stacktrace: never
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+app:
+  timezone: ${APP_TIMEZONE:Africa/Kigali}
+  uploads-dir: ${UPLOADS_DIR:./uploads}
+  cv-max-bytes: 5242880
+  jwt:
+    # Must be at least 32 characters. Always override in real deployments.
+    secret: ${JWT_SECRET:dev-only-secret-change-me-please-0123456789}
+    ttl-minutes: ${JWT_TTL_MINUTES:120}
+  cookie:
+    secure: ${COOKIE_SECURE:false}
+  admin:
+    email: ${ADMIN_EMAIL:admin@brightcore.rw}
+    password: ${ADMIN_PASSWORD:Admin@12345}
+  seed-sample-jobs: ${SEED_SAMPLE_JOBS:true}
