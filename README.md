@@ -1,0 +1,1 @@
+# Brightcore-technical-Assessment
