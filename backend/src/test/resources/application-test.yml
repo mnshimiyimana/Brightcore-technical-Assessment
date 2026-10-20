@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:recruitment;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+
+app:
+  uploads-dir: target/test-uploads
+  seed-sample-jobs: false
+  admin:
+    email: admin@test.rw
+    password: Correct-Horse-1
