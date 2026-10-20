@@ -1,0 +1,48 @@
+# One command to run everything: docker compose up --build
+# Then open http://localhost:3000
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: recruitment
+      POSTGRES_USER: recruitment
+      POSTGRES_PASSWORD: recruitment
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U recruitment -d recruitment"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/recruitment
+      DB_USERNAME: recruitment
+      DB_PASSWORD: recruitment
+      JWT_SECRET: ${JWT_SECRET:-local-docker-secret-change-me-0123456789abcdef}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@brightcore.rw}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-Admin@12345}
+    volumes:
+      - uploads:/data/uploads   # CVs survive container restarts
+    depends_on:
+      db:
+        condition: service_healthy
+    # Not published to the host: the browser reaches the API only through the frontend's /api proxy.
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        BACKEND_URL: http://backend:8080
+    environment:
+      BACKEND_URL: http://backend:8080
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
+  uploads:
